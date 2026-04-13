@@ -5,6 +5,17 @@
 (function () {
   'use strict';
 
+  // --- Theme Init ---
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  }
+  initTheme();
+
   // --- Case Study Data ---
   const caseStudies = {
     'featured-virtualmd': {
@@ -407,12 +418,27 @@
     setupScrollReveal();
     setupSmoothAnchors();
     setupBottomSheet();
+    setupThemeToggle();
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // --- Theme Logic ---
+  function setupThemeToggle() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
   }
 
   // --- Scroll Reveal ---
